@@ -1,0 +1,56 @@
+SCREEN_POOL_ARGS=$(echo $TERM | cut -d"," -f2)
+TERM=$(echo $TERM | cut -d"," -f1)
+connect() {
+
+	if [[ $STY != "" ]]; then
+		if [[ $(echo "$@" | grep -w -- --force) == "" ]]; then
+			echo "Already in a screen, not advised to connect further. Use --force to go ahead anyway"
+			return
+		fi
+	fi
+
+	free_screen=$(screen -list | grep ".console" | grep Detached | head -n1 | cut -f2)
+	if [[ $free_screen == "" ]]; then
+		echo "No free screens found, creating new!"
+		spawn "$@"
+	else
+		screen -x $free_screen
+	fi
+}
+spawn() {
+
+	if [[ $STY != "" ]]; then
+		if [[ $(echo "$@" | grep -w -- --force) == "" ]]; then
+			echo "Already in a screen, not advised to connect further. Use --force to go ahead anyway"
+			return
+		fi
+	fi
+
+	last_console_id=$(screen -list | grep ".console" | cut -f2 | cut -d"." -f2 | cut -d"e" -f2 | sort -n | tail -n1)
+	if [[ $last_console_id == "" ]]; then
+		new_console_id=1
+	else
+		new_console_id=$( echo $last_console_id + 1 | bc)
+	fi
+	screen -S console$new_console_id
+}
+pool() {
+	total_consoles=$(screen -ls | grep ".console" | wc -l)
+	free_consoles=$(screen -ls | grep ".console" | grep "Detached" | wc -l)
+	echo $free_consoles/$total_consoles screens are free
+	
+	if [[ $STY != "" ]]; then
+		echo "Connected to screen "$STY
+	fi
+	
+}
+
+if [[ $(echo $SCREEN_POOL_ARGS | grep -w -- --skip-connect) == "" ]]; then
+	if [[ $SSH_TTY != "" ]]; then
+		if [[ $STY == "" ]]; then
+			connect
+			echo Exiting
+			exit
+		fi
+	fi
+fi
