@@ -44,6 +44,13 @@ pool() {
 	fi
 	
 }
+release_all() {
+	all_screens=$(screen -ls | grep ".console" | cut -f2)
+	while read -r line; do
+		echo "Detaching $line"
+	screen -D "$line"
+	done <<< "$all_screens"
+}
 
 if [[ $(echo $SCREEN_POOL_ARGS | grep -w -- --skip-connect) == "" ]]; then
 	if [[ $SSH_TTY != "" ]]; then
