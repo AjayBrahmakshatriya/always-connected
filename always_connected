@@ -47,8 +47,10 @@ pool() {
 release_all() {
 	all_screens=$(screen -ls | grep ".console" | cut -f2)
 	while read -r line; do
-		echo "Detaching $line"
-	screen -D "$line"
+		if [[ "$STY" != "$line" ]]; then
+			echo "Detaching $line"
+			screen -D "$line"
+		fi
 	done <<< "$all_screens"
 }
 
