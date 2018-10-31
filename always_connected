@@ -52,6 +52,7 @@ release_all() {
 			screen -D "$line"
 		fi
 	done <<< "$all_screens"
+	screen -wipe
 }
 
 if [[ $(echo $SCREEN_POOL_ARGS | grep -w -- --skip-connect) == "" ]]; then
