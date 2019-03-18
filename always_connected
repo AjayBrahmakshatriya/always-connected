@@ -55,10 +55,22 @@ release_all() {
 	screen -wipe
 }
 
+rollover() {
+	touch ~/.always_connected_rollover
+	exit
+}
+
 if [[ $(echo $SCREEN_POOL_ARGS | grep -w -- --skip-connect) == "" ]]; then
 	if [[ $SSH_TTY != "" ]]; then
 		if [[ $STY == "" ]]; then
-			connect
+			while 
+				rm -f ~/.always_connected_rollover
+				connect
+				[ -f ~/.always_connected_rollover ]
+			do
+				:
+			done
+			#connect
 			echo Exiting
 			exit
 		fi
