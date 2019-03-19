@@ -56,7 +56,7 @@ release_all() {
 }
 
 rollover() {
-	touch ~/.always_connected_rollover
+	touch /tmp/.always_connected_rollover.$USER
 	exit
 }
 
@@ -64,9 +64,9 @@ if [[ $(echo $SCREEN_POOL_ARGS | grep -w -- --skip-connect) == "" ]]; then
 	if [[ $SSH_TTY != "" ]]; then
 		if [[ $STY == "" ]]; then
 			while 
-				rm -f ~/.always_connected_rollover
+				rm -f /tmp/.always_connected_rollover.$USER
 				connect
-				[ -f ~/.always_connected_rollover ]
+				[ -f /tmp/.always_connected_rollover.$USER ]
 			do
 				:
 			done
