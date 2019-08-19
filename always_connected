@@ -56,7 +56,11 @@ release_all() {
 }
 
 rollover() {
-	touch /tmp/.always_connected_rollover.$USER
+	echo > /tmp/.always_connected_rollover.$USER
+	exit
+}
+reconnect() {
+	echo $(pwd) > /tmp/.always_connected_rollover.$USER
 	exit
 }
 
@@ -64,8 +68,15 @@ if [[ $(echo $SCREEN_POOL_ARGS | grep -w -- --skip-connect) == "" ]]; then
 	if [[ $SSH_TTY != "" ]]; then
 		if [[ $STY == "" ]]; then
 			while 
+				next_dir=$(cat /tmp/.always_connected_rollover.$USER)
+	
 				rm -f /tmp/.always_connected_rollover.$USER
-				connect
+				if [[ $next_dir == "" ]]; then
+					connect
+				else
+					cd $next_dir
+					spawn
+				fi
 				[ -f /tmp/.always_connected_rollover.$USER ]
 			do
 				:
