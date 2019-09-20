@@ -67,9 +67,12 @@ reconnect() {
 if [[ $(echo $SCREEN_POOL_ARGS | grep -w -- --skip-connect) == "" ]]; then
 	if [[ $SSH_TTY != "" ]]; then
 		if [[ $STY == "" ]]; then
-			touch /tmp/.always_connected_rollover.$USER
 			while 
-				next_dir=$(cat /tmp/.always_connected_rollover.$USER)
+				if [ -f /tmp/.always_connected_rollover.$USER ]; then
+					next_dir=$(cat /tmp/.always_connected_rollover.$USER)
+				else
+					next_dir=""
+				fi
 	
 				rm -f /tmp/.always_connected_rollover.$USER
 				if [[ $next_dir == "" ]]; then
