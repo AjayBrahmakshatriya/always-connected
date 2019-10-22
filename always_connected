@@ -26,7 +26,7 @@ spawn() {
 		fi
 	fi
 
-	last_console_id=$(screen -list | grep ".console" | cut -f2 | cut -d"." -f2 | cut -d"e" -f2 | sort -n | tail -n1)
+	last_console_id=$(screen -list | grep "\.console" | cut -f2 | cut -d"." -f2 | cut -d"e" -f2 | sort -n | tail -n1)
 	if [[ $last_console_id == "" ]]; then
 		new_console_id=1
 	else
@@ -35,8 +35,8 @@ spawn() {
 	screen -S console$new_console_id
 }
 pool() {
-	total_consoles=$(screen -ls | grep ".console" | wc -l)
-	free_consoles=$(screen -ls | grep ".console" | grep "Detached" | wc -l)
+	total_consoles=$(screen -ls | grep "\.console" | wc -l)
+	free_consoles=$(screen -ls | grep "\.console" | grep "Detached" | wc -l)
 	echo $free_consoles/$total_consoles screens are free
 	
 	if [[ $STY != "" ]]; then
@@ -45,7 +45,7 @@ pool() {
 	
 }
 release_all() {
-	all_screens=$(screen -ls | grep ".console" | cut -f2)
+	all_screens=$(screen -ls | grep "\.console" | cut -f2)
 	while read -r line; do
 		if [[ "$STY" != "$line" ]]; then
 			echo "Detaching $line"
