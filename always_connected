@@ -9,7 +9,7 @@ connect() {
 		fi
 	fi
 
-	free_screen=$(screen -list | grep ".console" | grep Detached | head -n1 | cut -f2)
+	free_screen=$(screen -list | grep "\.console" | grep Detached | head -n1 | cut -f2)
 	if [[ $free_screen == "" ]]; then
 		echo "No free screens found, creating new!"
 		spawn "$@"
