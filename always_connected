@@ -1,5 +1,10 @@
 SCREEN_POOL_ARGS=$(echo $TERM | cut -d"," -f2)
 TERM=$(echo $TERM | cut -d"," -f1)
+if [[ $(echo $SCREEN_POOL_ARGS | grep -w -- --context=[^-]*) != "" ]]; then
+	suffix="."$(echo $SCREEN_POOL_ARGS | sed 's/.*--context=\([^-]*\).*/\1/')
+else
+	suffix=""
+fi
 connect() {
 
 	if [[ $STY != "" ]]; then
@@ -9,7 +14,7 @@ connect() {
 		fi
 	fi
 
-	free_screen=$(screen -list | grep "\.console" | grep Detached | head -n1 | cut -f2)
+	free_screen=$(screen -list | grep "\.console"$suffix | grep Detached | head -n1 | cut -f2)
 	if [[ $free_screen == "" ]]; then
 		echo "No free screens found, creating new!"
 		spawn "$@"
@@ -26,13 +31,13 @@ spawn() {
 		fi
 	fi
 
-	last_console_id=$(screen -list | grep "\.console" | cut -f2 | cut -d"." -f2 | cut -d"e" -f2 | sort -n | tail -n1)
+	last_console_id=$(screen -list | grep "\.console"$suffix | cut -f2 | cut -d"." -f2 | cut -d"e" -f2 | sort -n | tail -n1)
 	if [[ $last_console_id == "" ]]; then
 		new_console_id=1
 	else
 		new_console_id=$( echo $last_console_id + 1 | bc)
 	fi
-	screen -S console$new_console_id
+	screen -S console$suffix$new_console_id
 }
 pool() {
 	total_consoles=$(screen -ls | grep "\.console" | wc -l)
@@ -64,7 +69,7 @@ reconnect() {
 	exit
 }
 
-if [[ $(echo $SCREEN_POOL_ARGS | grep -w -- --skip-connect) == "" ]]; then
+if [[ $(echo $SCREEN_POOL_ARGS | grep -w -- --skip-connect) == "" ]]; then	
 	if [[ $SSH_TTY != "" ]]; then
 		if [[ $STY == "" ]]; then
 			while 
@@ -85,7 +90,6 @@ if [[ $(echo $SCREEN_POOL_ARGS | grep -w -- --skip-connect) == "" ]]; then
 			do
 				:
 			done
-			#connect
 			echo Exiting
 			exit
 		fi
