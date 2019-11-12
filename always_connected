@@ -39,6 +39,27 @@ spawn() {
 	fi
 	screen -S console$suffix$new_console_id
 }
+migrate() {
+	if [[ $1 != "" ]]; then
+		suffix="."$1
+	else
+		suffix=""
+	fi
+	if [[ $STY == "" ]]; then
+		echo "Cannot migrate screen when not connected"
+		return
+	fi
+	last_console_id=$(screen -list | grep "\.console"$suffix | cut -f2 | cut -d"." -f2 | cut -d"e" -f2 | sort -n | tail -n1)
+	if [[ $last_console_id == "" ]]; then
+		new_console_id=1
+	else
+		new_console_id=$( echo $last_console_id + 1 | bc)
+	fi
+	new_name=console$suffix$new_console_id
+	old_pid=$(echo $STY | cut -d"." -f1)
+	screen -X sessionname $new_name
+	export STY=$old_pid"."$new_name
+}
 pool() {
 	total_consoles=$(screen -ls | grep "\.console" | wc -l)
 	free_consoles=$(screen -ls | grep "\.console" | grep "Detached" | wc -l)
