@@ -14,7 +14,7 @@ connect() {
 		fi
 	fi
 
-	free_screen=$(screen -list | grep "\.console"$suffix | grep Detached | head -n1 | cut -f2)
+	free_screen=$(screen -list | grep "\.console"$suffix"\." | grep Detached | head -n1 | cut -f2)
 	if [[ $free_screen == "" ]]; then
 		echo "No free screens found, creating new!"
 		spawn "$@"
@@ -31,7 +31,7 @@ spawn() {
 		fi
 	fi
 
-	last_console_id=$(screen -list | grep "\.console"$suffix | cut -f2 | rev | cut -d"." -f1 | rev | sort -n | tail -n1)
+	last_console_id=$(screen -list | grep "\.console"$suffix"\." | cut -f2 | rev | cut -d"." -f1 | rev | sort -n | tail -n1)
 	if [[ $last_console_id == "" ]]; then
 		new_console_id=1
 	else
@@ -49,7 +49,7 @@ migrate() {
 		echo "Cannot migrate screen when not connected"
 		return
 	fi
-	last_console_id=$(screen -list | grep "\.console"$suffix | cut -f2 | rev | cut -d"." -f1 | rev | sort -n | tail -n1)
+	last_console_id=$(screen -list | grep "\.console"$suffix"\." | cut -f2 | rev | cut -d"." -f1 | rev | sort -n | tail -n1)
 	if [[ $last_console_id == "" ]]; then
 		new_console_id=1
 	else
@@ -91,7 +91,7 @@ reconnect() {
 }
 
 if [[ $(echo $SCREEN_POOL_ARGS | grep -w -- --skip-connect) == "" ]]; then	
-	if [[ $SSH_TTY != "" ]]; then
+	if [[ $SSH_TTY != "" ]] || [[ $SSH_CONNECTION != "" ]]; then
 		if [[ $STY == "" ]]; then
 			while 
 				if [ -f /tmp/.always_connected_rollover.$USER ]; then
