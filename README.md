@@ -19,5 +19,15 @@ To remove, just type
 It is as easy as that. 
 Remember this will affect only the installing user's logins. You need to install for every user you want to use always-conencted with.
 
+User commands to manage sessions - 
+
+
+| Command      | Behavior                                                                                                          |
+|--------------|-------------------------------------------------------------------------------------------------------------------|
+|`pool`        | Shows all active sessions and which are connected                                                                 |
+|`release_all` | Force disconnect all sessions except the current one (useful when a session appears to be connected but is not)   |
+|`rollover`    | Close current session and switch to the next one                                                                  |
+|`reconnect`   | Close the current session and connect to a new one                                                                |
+
 You can create issues or submit pull requests for bugs/improvements. 
  
