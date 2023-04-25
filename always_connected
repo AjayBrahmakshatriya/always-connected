@@ -91,7 +91,7 @@ reconnect() {
 }
 
 if [[ $(echo $SCREEN_POOL_ARGS | grep -w -- --skip-connect) == "" ]]; then	
-	if [[ $SSH_TTY != "" ]] || [[ $SSH_CONNECTION != "" ]]; then
+	if [[ $SSH_TTY != "" ]] || [[ $VSCODE_IPC_HOOK_CLI != "" ]]; then
 		if [[ $STY == "" ]]; then
 			while 
 				if [ -f /tmp/.always_connected_rollover.$USER ]; then
